@@ -178,26 +178,86 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ──────────────────────────────────────────────
-     CONTACT FORM
+     CONTACT FORM — FORMSPREE INTEGRATION
   ────────────────────────────────────────────── */
   const form = document.getElementById('contactForm');
   if (form) {
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
-      const btn  = form.querySelector('button[type="submit"]');
+      
+      const btn = form.querySelector('button[type="submit"]');
       const orig = btn.textContent;
-      btn.textContent       = 'Message Sent! ✓';
-      btn.style.background  = 'var(--accent2)';
-      btn.style.color       = 'var(--bg)';
-      btn.disabled          = true;
-
-      setTimeout(() => {
-        btn.textContent      = orig;
-        btn.style.background = '';
-        btn.style.color      = '';
-        btn.disabled         = false;
-        form.reset();
-      }, 3500);
+      const formStatus = document.getElementById('formStatus');
+      
+      // Disable button and show loading state
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      btn.style.opacity = '0.7';
+      
+      try {
+        // Collect form data
+        const formData = new FormData(form);
+        
+        // Submit to Formspree
+        const response = await fetch('https://formspree.io/f/xeevaaao', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          // Success
+          btn.textContent = 'Message Sent! ✓';
+          btn.style.background = 'var(--accent2)';
+          btn.style.color = 'var(--bg)';
+          
+          // Show success message
+          formStatus.style.display = 'block';
+          formStatus.style.background = 'rgba(127,255,110,0.1)';
+          formStatus.style.border = '1px solid rgba(127,255,110,0.3)';
+          formStatus.style.color = 'var(--accent2)';
+          formStatus.textContent = '✓ Your message has been sent successfully! I'll get back to you soon.';
+          
+          // Reset form
+          form.reset();
+          
+          // Reset button after 3.5s
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.opacity = '1';
+            btn.disabled = false;
+            formStatus.style.display = 'none';
+          }, 3500);
+        } else {
+          throw new Error('Form submission failed');
+        }
+      } catch (error) {
+        // Error handling
+        console.error('Form error:', error);
+        btn.textContent = 'Error sending ✗';
+        btn.style.background = 'rgba(255,107,53,0.3)';
+        btn.style.color = 'var(--accent3)';
+        
+        // Show error message
+        formStatus.style.display = 'block';
+        formStatus.style.background = 'rgba(255,107,53,0.1)';
+        formStatus.style.border = '1px solid rgba(255,107,53,0.3)';
+        formStatus.style.color = 'var(--accent3)';
+        formStatus.textContent = '✗ Error sending message. Please try again or contact me directly.';
+        
+        // Reset button after 3.5s
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+        }, 3500);
+      }
     });
   }
 
