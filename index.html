@@ -488,7 +488,7 @@
 
         <!-- FORM -->
         <div class="reveal">
-          <form class="contact-form" id="contactForm">
+        <form action="https://formspree.io/f/xeevaaao" method="POST" class="contact-form" id="contactForm">
             <div class="form-group">
               <label class="form-label">Your Name</label>
               <input type="text" class="form-input" placeholder="John Kamau" required>
@@ -505,6 +505,7 @@
               <label class="form-label">Message</label>
               <textarea class="form-textarea" placeholder="Tell me about your project..." required></textarea>
             </div>
+            <div id="formStatus" style="display: none; margin-bottom: 1rem; padding: 1rem; border-radius: 10px; text-align: center;"></div>
             <button type="submit" class="btn-primary" style="width:100%;justify-content:center;">
               Send Message ✉️
             </button>
